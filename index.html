@@ -1,0 +1,471 @@
+<html>
+<body onkeypress="handleEnter(event)">
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<style>
+        table, th, td {
+          border: 1px solid black;
+        }
+</style>
+
+<div ng-app="watchApp" ng-controller="watchCtrl" align="center">
+    
+    <table align="center" >
+    <select class=" form-control " autocomplete="off" data-ng-change="Get_noofups(blstWidth,blstLength,gapPercent)"   id="selectpalet"  data-ng-model="ddPalettype" >
+        <option value="">Select Pallet</option>
+        <option ng-repeat="sel in viewpalletdata| orderBy:'Pallet_Name'" ng-selected="ddPalettype == sel.Pallet_Name" value="{{sel.Pallet_Name}}">{{sel.Pallet_Name}}  </option>
+       
+    </select>
+
+
+    Pallet Width  <input type="number" ng-model="palletWidth" placeholder="Enter pallet width" >
+    Pallet Length  <input type="number" ng-model="palletLength" ng-focus="focusFunction()"  placeholder="Enter pallet length" >
+
+    BLST WIDTH  <input type="number" ng-model="blstWidth" placeholder="Enter BLST WIDth" >
+    BLST LENGTH  <input type="number" ng-model="blstLength"  placeholder="Enter BLST Length" >
+
+    <br/>
+    <br/>
+
+    Gap %  <input id="gapPP" type="number" ng-model="gapPercent" data-ng-change="Get_noofups(blstWidth,blstLength,gapPercent)"  placeholder="Enter GAP" >
+    TOTAL UPS  <input id="totalUPSPP" type="number" ng-model="totalUPS"  placeholder="UPS" >
+
+
+    Gap WIDTH  <input id="gapWidthPP" type="number" ng-model="gapWidth" placeholder="Enter GAP WIDTH" >
+    Gap LENGTH  <input id="gapHeightPP"  type="number" ng-model="gapLength"  placeholder="Enter GAP Height" >
+
+    <br/>
+    <br/>
+    <a id="title3" style="color:black"><b>hello9</b></a></br>
+
+    <a id="title" style="color:black"></a>
+    <a id="subTitle" style="color:blue"></a>
+    <a id="preferedData" style="color:green"></a>
+
+    </table>
+    <br/>
+    <br/>
+    <canvas id="myCanvas" style="border:1px solid #000000;"></canvas>
+
+   
+
+</div>
+<script type="text/javascript">
+
+
+var elementIdList=["gapPP","totalUPSPP","gapWidthPP","gapHeightPP"];
+
+function handleEnter(e){
+    var keycode = (e.keyCode ? e.keyCode : e.which);
+    if (keycode == '13') {
+
+        var activeElementId = document.activeElement.id;
+        var activeIndex = elementIdList.indexOf(activeElementId);
+      
+      //alert('You pressed enter! - '+x);
+
+        if((activeIndex<0 || elementIdList.length==(activeIndex+1))){
+            return;
+        }
+      document.getElementById(elementIdList[activeIndex+1]).focus();
+    }
+}
+
+var app = angular.module('watchApp', []);
+
+var shouldChangeToDefaultPallet = true;
+
+app.controller('watchCtrl', function ($scope) {
+    
+//$scope.viewpalletdata = ["200","400","500"];
+
+
+// $scope.load = function() {
+//     shouldChangeToDefaultPallet = true;
+//     alert("load");
+//   }
+
+// <option ng-repeat="sel in viewpalletdata| orderBy:'Pallet_Name'" ng-selected="ddPalettype == sel.Pallet_Name" value="{{sel.Pallet_Name}}">{{sel.Pallet_Name}}  </option>
+    $scope.viewpalletdata = [ 
+                                {Pallet_Name : "260"},
+                                {Pallet_Name : "200"},
+                                {Pallet_Name : "250"},
+                                {Pallet_Name : "300"},
+                                {Pallet_Name : "350"},
+                                {Pallet_Name : "400"},
+                                {Pallet_Name : "450"},
+                                {Pallet_Name : "500"}
+                            ];
+	
+	 $scope.$watch('ddPalettype', function (newval, oldval) {
+        var palletname = ($scope.ddPalettype);
+
+        $scope.palletWidth = parseInt(palletname);
+
+            // var pallet = palletname.split('X');
+            // var outerWidth = 0;
+            // var outerLength = 0;
+
+            // if (pallet.length < 2) {
+                // alert('Invalid Pallet');
+                // return;
+            // }
+
+            // $scope.palletWidth = parseFloat(pallet[0]);
+           // $scope.palletLength = parseFloat(pallet[1]);
+
+           
+			
+    });
+    $scope.$watch('palletWidth', function (newval, oldval) {
+        $scope.palletWidth=newval;
+
+    //    if($scope.gapPercent==undefined){
+    //         $scope.gapPercent=10;
+    //    }
+    
+
+    
+        $scope.redraw(
+            $scope.palletWidth,
+            $scope.palletLength,
+            $scope.blstWidth,
+            $scope.blstLength,
+            $scope.gapPercent,
+            $scope.gapWidth,
+            $scope.gapLength,
+            );
+    });
+
+    $scope.$watch('palletLength', function (newval, oldval) {
+        $scope.palletLength=newval;
+
+        $scope.redraw(
+            $scope.palletWidth,
+            $scope.palletLength,
+            $scope.blstWidth,
+            $scope.blstLength,
+            $scope.gapPercent,
+            $scope.gapWidth,
+            $scope.gapLength,
+            );
+    });
+
+
+    $scope.$watch('gapPercent', function (newval, oldval) {
+        $scope.gapPercent=newval;
+        if(newval<=0){
+            $scope.gapPercent='';  
+            return;
+        }
+        if(newval>=100){
+            $scope.gapPercent=oldval;  
+            return;
+        }
+
+        $scope.getGapValues();
+       
+    });
+
+
+    $scope.$watch('gapWidth', function (newval, oldval) {
+        $scope.gapWidth=newval;
+        ///$scope.getGapValues();
+        $scope.redraw(
+            $scope.palletWidth,
+            $scope.palletLength,
+            $scope.blstWidth,
+            $scope.blstLength,
+            $scope.gapPercent,
+            $scope.gapWidth,
+            $scope.gapLength,
+            );
+    });
+
+    $scope.$watch('gapLength', function (newval, oldval) {
+        $scope.gapLength=newval;
+        $scope.redraw(
+            $scope.palletWidth,
+            $scope.palletLength,
+            $scope.blstWidth,
+            $scope.blstLength,
+            $scope.gapPercent,
+            $scope.gapWidth,
+            $scope.gapLength,
+            );
+    });
+
+
+    $scope.$watch('blstWidth', function (newval, oldval) {
+        $scope.blstWidth=newval;
+        $scope.redraw(
+            $scope.palletWidth,
+            $scope.palletLength,
+            $scope.blstWidth,
+            $scope.blstLength,
+            $scope.gapPercent,
+            $scope.gapWidth,
+            $scope.gapLength,
+            );
+    });
+
+    $scope.$watch('blstLength', function (newval, oldval) {
+        $scope.blstLength=newval;
+        $scope.redraw(
+            $scope.palletWidth,
+            $scope.palletLength,
+            $scope.blstWidth,
+            $scope.blstLength,
+            $scope.gapPercent,
+            $scope.gapWidth,
+            $scope.gapLength,
+            );
+    });
+
+$scope.focusFunction=function(){
+    shouldChangeToDefaultPallet = false;
+}
+
+$scope.getPalletAutoLength = function() {
+
+    if(shouldChangeToDefaultPallet ){
+
+        $scope.palletLength = parseInt($scope.blstLength + (parseFloat($scope.gapLength)*2));
+    }
+}
+
+$scope.getGapValues=function(){
+
+    if($scope.gapPercent==''|| $scope.gapPercent==undefined||$scope.gapPercent=='undefined'|| $scope.gapPercent=='null'){
+          return;
+        }
+
+        
+        if($scope.blstWidth==''|| $scope.blstWidth==undefined||$scope.blstWidth=='undefined'|| $scope.blstWidth=='null'){
+          return;
+        }
+        var innerBoxWidth=parseInt($scope.blstWidth);
+        var gapPercent=parseInt($scope.gapPercent);
+
+       var  gapValue = (innerBoxWidth * gapPercent) / 100;
+       $scope.gapWidth=gapValue;
+       $scope.gapLength=gapValue;
+
+
+
+       $scope.getPalletAutoLength();
+}
+
+$scope.redraw = function (palletWidth,palletLength,blstWidth,blstLength,gapPercent,gapWidth,gapLength){
+
+        if(palletWidth==''|| palletWidth==undefined||palletWidth=='undefined'|| palletWidth=='null'){
+            palletWidth='0';
+         // return;
+        }
+        if(palletLength==''|| palletLength==undefined||palletLength=='undefined'|| palletLength=='null'){
+            palletLength='0';
+         // return;
+        }
+
+
+        if(blstWidth==''|| blstWidth==undefined||blstWidth=='undefined'|| blstWidth=='null'){
+            blstWidth='0';
+         // return;
+        }
+        if(blstLength==''|| blstLength==undefined||blstLength=='undefined'|| blstLength=='null'){
+            blstLength='0';
+         // return;
+        }
+
+
+
+
+        if(gapPercent==''|| gapPercent==undefined||gapPercent=='undefined'|| gapPercent=='null'){
+            gapPercent='0';
+         // return;
+        }
+
+
+        if(gapWidth==''|| gapWidth==undefined||gapWidth=='undefined'|| gapWidth=='null'){
+            gapWidth='0';
+         // return;
+        }
+        if(gapLength==''|| gapLength==undefined||gapLength=='undefined'|| gapLength=='null'){
+            gapLength='0';
+         // return;
+        }
+
+        var outerWidth=parseInt(palletWidth); // pallet width from editable text field
+        var outerLength=parseInt(palletLength); // pallet height from editable text field
+
+        var innerBoxWidth=parseInt(blstWidth); // inner boc width from editable text field
+        var innerBoxLength=parseInt(blstLength); // inner box height from editable text field
+       // var gapPercent=10; // default gap percent
+
+        var gapValue = (innerBoxWidth * parseInt(gapPercent)) / 100; // default gap value for height and width (set into gap height and gap width editable text field)
+
+        var gapWidthValue= parseFloat(gapWidth); // changed gap width value (get from  editable gap width text field)
+        var gapHeightValue= parseFloat(gapLength); // changed gap height value (get from editable gap height text field)
+
+
+
+        if ((innerBoxWidth + gapWidthValue) > outerWidth)
+        {
+        // show error  that inner box width + gapWidth can not be grater then outer width
+           // return;
+        }
+
+        if ((innerBoxLength + gapHeightValue) > outerLength)
+         {
+         // show error  that inner box height + gapHeight can not be grater then outer Lenght
+          // return;
+        }
+
+
+
+
+
+
+
+        var singleBlstArea=parseFloat(innerBoxWidth + gapWidthValue);
+        var colCountY = parseInt( (outerWidth-gapWidthValue) / singleBlstArea);
+        var selectedScrapWidth = parseFloat(outerWidth - (colCountY * singleBlstArea)).toFixed(3);
+
+        var suggestedPallet=outerWidth;
+
+        var foundMinScrapsWidth = new Array($scope.viewpalletdata.length);
+        var foundMinScrapsLength = new Array($scope.viewpalletdata.length);
+        var foundMinScrapsAreas = new Array($scope.viewpalletdata.length);
+        let areaAndMap= new Map();
+
+
+        var eachBlstAreaWidth = 0;
+        var eachColCount = 0;
+        var eachScrapWidth = 0;
+
+        var eachBlstAreaLength = 0;
+        var eachRowCount = 0;
+        var eachScrapLength = 0;
+
+
+
+        //$scope.viewpalletdata =>  Pallet widths 
+
+        var diplayTxtst = "</br>";
+
+        for (var c=0; c<$scope.viewpalletdata.length; c++ ){
+
+            var eachPalletWidthValue=$scope.viewpalletdata[c].Pallet_Name;
+
+        //     finding scrap area in width
+            eachBlstAreaWidth = parseFloat(innerBoxWidth + gapWidthValue);
+            eachColCount = parseInt((parseInt(eachPalletWidthValue)-gapWidthValue) / eachBlstAreaWidth) ;
+
+            eachScrapWidth = parseFloat(eachPalletWidthValue - (eachColCount * eachBlstAreaWidth)).toFixed(3);
+
+            foundMinScrapsWidth[c] = eachScrapWidth;
+
+
+            //  finding scrap area in height 
+
+            eachBlstAreaLength = parseFloat(innerBoxLength + gapLength);
+
+            eachRowCount = parseInt((outerLength-gapLength) / eachBlstAreaLength) ;
+
+            eachScrapLength = parseFloat(outerLength - (eachRowCount * eachBlstAreaLength)).toFixed(3);
+
+            foundMinScrapsLength[c] = eachScrapLength;
+
+
+
+            var areaOfWidth= eachScrapWidth * outerLength ;
+
+            var areaOfLength = eachScrapLength * (eachPalletWidthValue- eachScrapWidth);
+
+            foundMinScrapsAreas[c] = areaOfWidth + areaOfLength;
+
+            areaAndMap.set(""+foundMinScrapsAreas[c],eachPalletWidthValue);
+
+            if(Number.isNaN(foundMinScrapsAreas[c])){
+                continue;
+            }
+            diplayTxtst+= c+"=> Pallet : "+eachPalletWidthValue+"  x  "+ outerLength+"    [ Scrap : "+eachScrapWidth+" x "+eachScrapLength+" ] Scrap Area : "+foundMinScrapsAreas[c]+" </br>";
+            
+        }
+
+       
+        var preferredScrapArea= foundMinScrapsAreas.sort(function(a, b){
+            return a - b;
+        })[0];
+
+       // alert( " Scrap Widths : "+preferredScrapArea);
+
+        var subTit=document.getElementById("subTitle");
+        subTit.innerHTML=diplayTxtst;
+
+        var preferedData=document.getElementById("preferedData");
+        preferedData.innerHTML='';
+
+        if(!Number.isNaN(preferredScrapArea)){
+
+            preferedData.innerHTML="</br> Preferred Pallet : "+areaAndMap.get(""+preferredScrapArea)+"x"+outerLength +" & Area : "+preferredScrapArea;
+        }
+
+        
+
+
+
+
+
+        var rowCount = parseInt((outerWidth-gapWidthValue) / (innerBoxWidth + gapWidthValue));
+
+        var colCount = parseInt((outerLength-gapHeightValue) / (innerBoxLength + gapHeightValue));
+
+        rowCount=Number.isNaN(rowCount) ? 0: rowCount;
+        colCount=Number.isNaN(colCount) ? 0: colCount;
+
+        var totalBoxes = rowCount * colCount;
+
+
+        $scope.totalUPS=totalBoxes;
+
+        var diplayTxt = "Sheet Size : " + outerWidth + "x" + outerLength + ", Box Size : " + innerBoxWidth + "x" + innerBoxLength + ", Margin : " + gapPercent + "%  (" + gapWidthValue + " x "+gapHeightValue+"), Total Boxes : " + totalBoxes;
+
+        var tit=document.getElementById("title");
+
+        tit.innerHTML=diplayTxt;
+
+        var startXx = 0 + gapWidthValue;
+        var startYy = 0+ gapHeightValue;
+
+
+                var c = document.getElementById("myCanvas");
+                c.height=outerLength;
+                c.width=outerWidth;
+
+                var ctx = c.getContext("2d");
+            
+                        for (var rx = 0; rx < colCount ; rx++)
+                            {
+                                for (var cx = 0; cx < rowCount; cx++)
+                                {
+                                
+                                    ctx.beginPath();
+                                    ctx.lineWidth = "1px";
+                                    ctx.strokeStyle = "#000000";
+                                    ctx.rect(startXx, startYy, innerBoxWidth, innerBoxLength);
+                                    ctx.stroke();
+
+                                    startXx = startXx + ((innerBoxWidth + gapWidthValue));
+                                }
+                                startYy = startYy+(innerBoxLength + gapHeightValue) ;
+                                startXx = 0 + gapWidthValue;
+                              }
+        }
+
+
+    });
+</script> 
+        
+</body>
+</html>

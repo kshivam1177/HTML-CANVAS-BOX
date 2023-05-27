@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+<style>
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    p {
+        font-style: normal;
+    }
+
+    label {
+        text-align: left;
+        display: block;
+        float: left;
+        clear: left;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+
+
+
+    /* Set a style for all buttons */
+    button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        opacity: 0.9;
+    }
+
+    button:hover {
+        opacity: 1;
+    }
+
+    /* Extra styles for the cancel button */
+    .cancelbtn {
+        padding: 14px 20px;
+        background-color: #f44336;
+    }
+
+    /* Float cancel and signup buttons and add an equal width */
+    .cancelbtn,
+    .signupbtn {
+        float: left;
+        width: 50%;
+    }
+
+    /* Add padding to container elements */
+    .container {
+        padding: 6px;
+    }
+
+    /* The Modal (background) */
+    .modal {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: #474e5d;
+        padding-top: 10px;
+    }
+
+    /* Modal Content/Box */
+    .modal-content {
+        background-color: #fefefe;
+        margin: 5% auto 15% auto;
+        /* 5% from the top, 15% from the bottom and centered */
+        border: 1px solid #888;
+        width: 95%;
+        height: 100%;
+        /* Could be more or less, depending on screen size */
+    }
+
+    /* Style the horizontal ruler */
+    hr {
+        border: 1px solid #f1f1f1;
+        margin-bottom: 25px;
+    }
+
+    /* The Close Button (x) */
+    .close {
+        position: absolute;
+        right: 35px;
+        top: 15px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #f1f1f1;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #f44336;
+        cursor: pointer;
+    }
+
+    /* Clear floats */
+    .clearfix::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+
+    /* Change styles for cancel button and signup button on extra small screens */
+    @media screen and (max-width: 300px) {
+
+        .cancelbtn,
+        .signupbtn {
+            width: 100%;
+        }
+    }
+
+    .column30 {
+        float: left;
+        width: 30%;
+        height: 100%;
+        padding-top: 0px;
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+
+    .column25 {
+        float: left;
+        width: 25%;
+        height: 100%;
+        padding: 10px;
+    }
+
+    .column70 {
+        float: right;
+        width: 70%;
+        padding: 10px;
+        text-align: center;
+    }
+
+    /* Clear floats after the columns */
+    .row:after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    .select-css {
+        display: block;
+        font-size: 14px;
+        font-family: sans-serif;
+        font-weight: 300;
+        color: #444;
+        line-height: 1;
+        padding: .6em 1.4em .5em .8em;
+        box-sizing: border-box;
+        margin: 0;
+        width: 290px;
+        border: 1px solid #aaa;
+        box-shadow: 0 1px 0 1px rgba(0, 0, 0, .04);
+        border-radius: .5em;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        appearance: none;
+        background-color: #fff;
+        background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'),
+            linear-gradient(to bottom, #ffffff 0%, #e5e5e5 100%);
+        background-repeat: no-repeat, repeat;
+        background-position: right .7em top 50%, 0 0;
+        background-size: .65em auto, 100%;
+    }
+
+    .select-css::-ms-expand {
+        display: none;
+    }
+
+    .select-css:hover {
+        border-color: #888;
+    }
+
+    .select-css:focus {
+        border-color: #aaa;
+        box-shadow: 0 0 1px 3px rgba(59, 153, 252, .7);
+        box-shadow: 0 0 0 2px -moz-mac-focusring;
+        color: #222;
+        outline: none;
+    }
+
+    .select-css option {
+        font-weight: normal;
+    }
+
+    .tableWrap {
+            height: 370px;
+            width: 32%;
+            border: 2px solid black;
+            overflow: auto;
+        }
+    thead tr th {
+            position: sticky;
+            top: 0;
+        }
+    table {
+            border-collapse: collapse;
+        }
+    th {
+            padding: 2px;
+            padding-left: 4px;
+            border-left: 1px dotted rgba(200, 209, 224, 0.6);
+            border-bottom: 1px solid #e8e8e8;
+            background: #9b9b9b;
+            text-align: left;
+            /* With border-collapse, we must use box-shadow or psuedo elements
+            for the header borders */
+            box-shadow: 0px 0px 0 2px #e8e8e8;
+        }
+
+            /* Basic Demo styling */
+    table {
+            width: 100%;
+            font-family: sans-serif;
+        }
+    table td {
+            padding: 12px;
+        }
+    tbody tr {
+            border-bottom: 2px solid #e8e8e8;
+        }
+    thead {
+            font-weight: 500;
+            width: 100%;
+            color: rgba(0, 0, 0, 0.85);
+        }
+    tbody tr:hover {
+            background: rgb(216, 216, 216);
+        }
+
+    .selected {
+         background-color: lightseagreen;
+    }
+</style>
+
+<body>
+    <div ng-app="watchApp" ng-controller="watchCtrl">
+
+        <div class="column30" style="background-color:#ffffff;">
+
+            <form class="modal-content">
+
+                <div class="container " align="left">
+                    <h4>Drawing Form</h4>
+
+                    <div class="form-horizontal " style='margin-left: 10px'>
+
+                        <!-- <div class="form-group">
+
+                            <div class="col-sm-2">
+                                <label for="pageWidths" class="bmd-label-floating">Page Widths</label>
+                                <select class="select-css" name="pageWidths" autocomplete="off"
+                                    data-ng-change="Get_noofups(blstWidth,blstLength,gapPercent)" id="selectpalet"
+                                    data-ng-model="ddPalettype">
+                                    <option value="">Select Page Width</option>
+                                    <option ng-repeat="sel in viewpalletdata| orderBy:'pageWidth'"
+                                        ng-selected="ddPalettype == sel.pageWidth" value="{{sel.pageWidth}}">
+                                        {{sel.pageWidth}}
+                                    </option>
+                                </select>
+                            </div>
+
+                         </div>
+
+                        <div class="form-group ">
+                            <div class="col-sm-2">
+                                <label for="pageWidth" class="bmd-label-floating">Page Width</label>
+                                <input type="number" ng-model="palletWidth" class="form-control" id="pageWidth">
+                            </div>
+
+                            <div class="col-sm-2">
+                                <label for="pageLength" class="bmd-label-floating">Page Length</label>
+                                <input type="number" ng-model="palletLength" class="form-control" id="pageLength">
+                            </div>
+                        </div> -->
+
+                        <div class="form-group ">
+                            <div class="col-sm-2">
+                                <label for="cornerMargins" class="bmd-label-floating">Corner Margin</label>
+                                <input type="number" ng-model="cornerMargin" class="form-control" id="cornerMargins">
+                            </div>
+							<div class="col-sm-2">
+                                <label for="blstInterchange" class="bmd-label-floating">Interchange</label>
+                                <p ng-click="interchangeBlstData(blstWidth,blstLength)" style="font-size:48px;color:blue;" id="blstInterchange"> &#8646;</p>
+                            </div>
+
+                           
+                             </div>
+                        <div class="form-group ">
+                            <div class="col-sm-2">
+                                <label for="innerBoxWidth" class="bmd-label-floating">BOX Width</label>
+                                <input type="number" ng-model="blstWidth" class="form-control" id="innerBoxWidth">
+                            </div>
+
+
+                            <div class="col-sm-2">
+                                <label for="innerBoxLength" class="bmd-label-floating">BOX Length</label>
+                                <input type="number" ng-model="blstLength" class="form-control" id="innerBoxLength">
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <div class="col-sm-2">
+                                <label for="innerBoxHeight" class="bmd-label-floating">BOX Height</label>
+                                <input type="number" ng-model="blstHeight" class="form-control" id="innerBoxHeight">
+                            </div>
+
+                            <div class="col-sm-2">
+                                <label for="noOfRowsPP" class="bmd-label-floating">Rows</label>
+                                <input type="number" ng-model="noOfRows" class="form-control" id="noOfRowsPP">
+                            </div>
+                        </div>
+
+                        <div class="form-group ">
+                            <div class="col-sm-2">
+                                <label for="gapPercent" class="bmd-label-floating">GAP % </label>
+                                <input id="gapPP" type="number" ng-model="gapPercent"
+                                 class="form-control" id="gapPercent">
+                            </div>
+
+                            <div class="col-sm-2">
+                                <label for="totalBoxes" class="bmd-label-floating">Total Boxes</label>
+                                <input id="totalUPSPP"  disabled type="number" ng-model="totalUPS" class="form-control"
+                                    name="totalBoxes">
+                            </div>
+                        </div>
+
+                        <div class="form-group ">
+                            <div class="col-sm-2">
+                                <label for="gapPercent" class="bmd-label-floating">Gap Width</label>
+                                <input id="gapWidthPP" type="number" ng-model="gapWidth" class="form-control">
+                            </div>
+
+                            <div class="col-sm-2">
+                                <label for="totalBoxes" class="bmd-label-floating">Gap Length</label>
+                                <input id="gapHeightPP" type="number" ng-model="gapLength" class="form-control"
+                                    id="totalBoxes">
+                            </div>
+                        </div>
+
+
+                        <div class="tableWrap">
+                                <table datatable="ng" >
+                                  <thead>
+                                    <tr>
+                                      <th>SRN  </th>
+                                      <th>INDEX</th>
+                                      <th><span>Page(WxL)</span></th>
+                                      <th><span>Boxes</span></th>
+                                      <th><span>Blank Area Score</span></th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                        <tr ng-repeat="eachRow in foundScrapsList" ng-class="{selected : eachRow.count === selectedCountIndex}" ng-click="setSelectedRow(eachRow)" >
+                                            <td><span>{{foundScrapsList.indexOf(eachRow)+1}} 
+                                                  
+                                            </span></td>
+                                            <td><span>{{eachRow.count+1}}</span></td>
+                                            <td><span>{{eachRow.pageSize}}</span></td>
+                                            <td><span>{{eachRow.totalBoxes}}</span></td>
+                                            <td><span>{{eachRow.scrapArea}}</span></td>
+                                            <td></td>
+                                        </tr>
+                                   
+                                  </tbody>
+                                </table>
+                              </div>
+                        <div class="form-group ">
+                            <a id="subTitle" style="color:blue"></a>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        <div class="column70" style="background-color:#ffffff;">
+            <h3>Drawring Preview</h3>
+            <a id="title" style="color:black"></a>
+            <a id="preferedData" style="color:green"></a>
+
+            <div align="center">
+                    <canvas id="myCanvas" style="border:1px solid #000000;"></canvas>
+            </div>
+        </div>
+
+    </div>
+
+
+    <script type="text/javascript">
+
+        var c = document.getElementById("myCanvas");
+        c.height=0;
+        c.width=0;
+
+       
+
+        var sideMargin = 12 ;
+
+        var elementIdList = ["gapPP", "totalUPSPP", "gapWidthPP", "gapHeightPP"];
+
+        function handleEnter(e) {
+            var keycode = (e.keyCode ? e.keyCode : e.which);
+            if (keycode == '13') {
+
+                var activeElementId = document.activeElement.id;
+                var activeIndex = elementIdList.indexOf(activeElementId);
+
+                if ((activeIndex < 0 || elementIdList.length == (activeIndex + 1))) {
+                    return;
+                }
+                document.getElementById(elementIdList[activeIndex + 1]).focus();
+            }
+        }
+
+    
+
+        var app = angular.module('watchApp', []);
+
+        var shouldChangeToDefaultPallet = true;
+
+        app.controller('watchCtrl', function ($scope) {
+
+            $scope.gapPercent = 60;
+            $scope.noOfRows=1;
+
+            $scope.viewpalletdata = [
+                "300x100",
+                "352x100",
+                "454x100",
+                "504x100",
+                "540x100"
+            ];
+           
+            $scope.selectedCountIndex = null;
+            $scope.setSelectedRow = function (eachObj){
+                $scope.selectedCountIndex=eachObj.count;
+
+                $scope.redraw(
+                        eachObj.outerWidth,
+                        eachObj.outerLength,
+                        eachObj.innerBoxWidth,
+                        eachObj.innerBoxLength,
+                        eachObj.innerBoxHeight,
+                        eachObj.gapPercent,
+                        eachObj.noOfRows,
+                        eachObj.gapWidthValue,
+                        eachObj.gapLengthValue);
+            }
+
+            // $scope.load = function() {
+            //     shouldChangeToDefaultPallet = true;
+            //     alert("load");
+            //   }
+
+            // <option ng-repeat="sel in viewpalletdata| orderBy:'Pallet_Name'" ng-selected="ddPalettype == sel.Pallet_Name" value="{{sel.Pallet_Name}}">{{sel.Pallet_Name}}  </option>
+            // $scope.viewpalletdata = [
+            //     { pageWidth: "260" , pageHeight:"350"},
+            //     { pageWidth: "200" , pageHeight:"350"},
+            //     { pageWidth: "250" , pageHeight:"400"},
+            //     { pageWidth: "300"  ,pageHeight:"400"},
+            //     { pageWidth: "350"  ,pageHeight:"450"},
+            //     { pageWidth: "400"  ,pageHeight:"450"},
+            //     { pageWidth: "450"  ,pageHeight:"450"},
+            //     { pageWidth: "500"  ,pageHeight:"500"},
+            //     { pageWidth: "550"  ,pageHeight:"500"},
+            //     { pageWidth: "500"  ,pageHeight:"500"}
+            // ];
+
+            // $scope.$watch('ddPalettype', function (newval, oldval) {
+            //     var palletname = ($scope.ddPalettype);
+
+            //     $scope.palletWidth = parseInt(palletname);
+
+            //     // var pallet = palletname.split('X');
+            //     // var outerWidth = 0;
+            //     // var outerLength = 0;
+
+            //     // if (pallet.length < 2) {
+            //     // alert('Invalid Pallet');
+            //     // return;
+            //     // }
+
+            //     // $scope.palletWidth = parseFloat(pallet[0]);
+            //     // $scope.palletLength = parseFloat(pallet[1]);
+
+
+
+            // });
+            // $scope.$watch('palletWidth', function (newval, oldval) {
+            //     $scope.palletWidth = newval;
+
+            //     //    if($scope.gapPercent==undefined){
+            //     //         $scope.gapPercent=10;
+            //     //    }
+
+
+
+            //     $scope.redraw(
+            //         $scope.palletWidth,
+            //         $scope.palletLength,
+            //         $scope.blstWidth,
+            //         $scope.blstLength,
+            //         $scope.gapPercent,
+            //         $scope.gapWidth,
+            //         $scope.gapLength,
+            //     );
+            // });
+
+            // $scope.$watch('palletLength', function (newval, oldval) {
+            //     $scope.palletLength = newval;
+
+            //     $scope.redraw(
+            //         $scope.palletWidth,
+            //         $scope.palletLength,
+            //         $scope.blstWidth,
+            //         $scope.blstLength,
+            //         $scope.gapPercent,
+            //         $scope.gapWidth,
+            //         $scope.gapLength,
+            //     );
+            // });
+
+            $scope.cornerMargin = 12 ;
+
+            $scope.interchangeBlstData = function(blstWidth,blstLength){
+
+                $scope.blstLength=blstWidth;
+                $scope.blstWidth=blstLength;
+
+            }
+
+             $scope.$watch('cornerMargin', function (newval, oldval) {
+                 
+                if (newval < 0) {
+
+                    newval = 60;
+                }
+                
+                sideMargin = newval;
+                $scope.cornerMargin = newval;
+
+                $scope.calculateLessScrapArea(
+                    $scope.blstWidth,
+                    $scope.blstLength,
+                    $scope.blstHeight,
+                    $scope.noOfRows,
+                    $scope.gapPercent,
+                    $scope.gapWidth,
+                    $scope.gapLength,
+                );
+
+             });
+
+            $scope.$watch('gapPercent', function (newval, oldval) {
+               
+                if (newval < 0) {
+
+                    newval = 60;
+                }
+
+                if (newval >= 100) {
+                    $scope.gapPercent = 60;
+                    return;
+                }
+                $scope.gapPercent = newval;
+               
+                $scope.getGapValues();
+
+            });
+
+            $scope.$watch('noOfRows', function (newval, oldval) {
+                if(newval<=0){
+                    //alert('Invalid '+newval+ ' Number Of Row');
+                    newval=1;
+                    
+                }
+                $scope.noOfRows = newval;
+
+                $scope.calculateLessScrapArea(
+                    $scope.blstWidth,
+                    $scope.blstLength,
+                    $scope.blstHeight,
+                    $scope.noOfRows,
+                    $scope.gapPercent,
+                    $scope.gapWidth,
+                    $scope.gapLength,
+                );
+            });
+
+            $scope.$watch('gapWidth', function (newval, oldval) {
+                if(newval<0){
+                    newval=0;
+                  // return;
+                }
+                $scope.gapWidth = newval;
+                $scope.calculateLessScrapArea(
+                    $scope.blstWidth,
+                    $scope.blstLength,
+                    $scope.blstHeight,
+                    $scope.noOfRows,
+                    $scope.gapPercent,
+                    $scope.gapWidth,
+                    $scope.gapLength,
+                );
+            });
+
+            $scope.$watch('gapLength', function (newval, oldval) {
+                if(newval<0){
+                    newval=0;
+                }
+
+                $scope.gapLength = newval;
+                $scope.calculateLessScrapArea(
+                    $scope.blstWidth,
+                    $scope.blstLength,
+                    $scope.blstHeight,
+                    $scope.noOfRows,
+                    $scope.gapPercent,
+                    $scope.gapWidth,
+                    $scope.gapLength,
+                );
+            });
+
+
+            $scope.$watch('blstWidth', function (newval, oldval) {
+               
+                if(newval<0){
+                    newval=0;
+                }
+                 $scope.blstWidth = newval;
+                $scope.calculateLessScrapArea(
+                    $scope.blstWidth,
+                    $scope.blstLength,
+                    $scope.blstHeight,
+                    $scope.noOfRows,
+                    $scope.gapPercent,
+                    $scope.gapWidth,
+                    $scope.gapLength,
+                );
+            });
+
+            $scope.$watch('blstLength', function (newval, oldval) {
+                
+                if(newval<0){
+                    newval=0;
+                }
+                $scope.blstLength = newval;
+                $scope.calculateLessScrapArea(
+                    $scope.blstWidth,
+                    $scope.blstLength,
+                    $scope.blstHeight,
+                    $scope.noOfRows,
+                    $scope.gapPercent,
+                    $scope.gapWidth,
+                    $scope.gapLength,
+                );
+            });
+
+            $scope.$watch('blstHeight', function (newval, oldval) {
+                if(newval<0){
+                    newval=0;
+                }
+
+                $scope.blstHeight = newval;
+                $scope.getGapValues();
+            });
+
+            $scope.getGapValues = function () {
+
+                if ($scope.gapPercent == '' || $scope.gapPercent == undefined || $scope.gapPercent == 'undefined' || $scope.gapPercent == 'null') {
+                    $scope.gapWidth = '';
+                    $scope.gapLength = '';
+                    return;
+                }
+
+                if ($scope.blstHeight == '' || $scope.blstHeight == undefined || $scope.blstHeight == 'undefined' || $scope.blstHeight == 'null') {
+                    return;
+                }
+
+                var innerBoxHeight = parseInt($scope.blstHeight);
+                var gapPercent = parseInt($scope.gapPercent);
+
+                var gapValue = ((innerBoxHeight * 2) * gapPercent) / 100;
+                $scope.gapWidth = gapValue;
+                $scope.gapLength = gapValue;
+
+            }
+
+            $scope.calculateLessScrapArea = function (blstWidth, blstLength, blstHeight, nofRows,gapPercent, gapWidth, gapLength) {
+
+                if (blstWidth == '' || blstWidth == undefined || blstWidth == 'undefined' || blstWidth == 'null') {
+                    blstWidth = '0';
+                    // return;
+                }
+                if (blstLength == '' || blstLength == undefined || blstLength == 'undefined' || blstLength == 'null') {
+                    blstLength = '0';
+                    // return;
+                }
+
+                if (blstHeight == '' || blstHeight == undefined || blstHeight == 'undefined' || blstHeight == 'null') {
+                    blstHeight = '0';
+                    // return;
+                }
+                if (nofRows == '' || nofRows == undefined || nofRows == 'undefined' || nofRows == 'null') {
+                    nofRows = '1';
+                    $scope.nofRows = nofRows;
+                    // return;
+                }
+
+
+                if (gapPercent == '' || gapPercent == undefined || gapPercent == 'undefined' || gapPercent == 'null') {
+                    gapPercent = '0';
+                    // return;
+                }
+
+
+                if (gapWidth == '' || gapWidth == undefined || gapWidth == 'undefined' || gapWidth == 'null') {
+                    gapWidth = '0';
+                    // return;
+                }
+                if (gapLength == '' || gapLength == undefined || gapLength == 'undefined' || gapLength == 'null') {
+                    gapLength = '0';
+                    // return;
+                }
+
+              
+                var innerBoxWidth = parseFloat(blstWidth); // inner boc width from editable text field
+                var innerBoxLength = parseFloat(blstLength); // inner box height from editable text field
+                var innerBoxHeight = parseFloat(blstHeight); // inner box height from editable text field
+
+                var noOfRows = parseInt(nofRows); // changed gap width value (get from  editable gap width text field)
+                var gapWidthValue = parseFloat(gapWidth); // changed gap width value (get from  editable gap width text field)
+                var gapLengthValue = parseFloat(gapLength); // changed gap height value (get from editable gap height text field)
+
+                var outerLength1 = parseInt (((innerBoxLength + gapLengthValue)* noOfRows) + sideMargin);
+
+                var outerLength =  parseFloat(((innerBoxLength * noOfRows) + (gapLengthValue * (noOfRows-1))) + (sideMargin * 2)); 
+
+               // if(outerLength <  )
+                
+                
+                var dataScrapAreas = new Array();
+                //var dataScrapAreas =new Array($scope.viewpalletdata.length);
+
+                var eachBlstAreaWidth = parseFloat(innerBoxWidth + gapWidthValue);
+                var eachColCount = 0;
+
+                var eachBlstAreaLength = 0;
+                var eachRowCount = 0;
+               
+
+                for (var c = 0; c < $scope.viewpalletdata.length; c++) {
+
+                    var eachPageSize = $scope.viewpalletdata[c].split("x");
+
+                    var outerWidth  = parseInt(eachPageSize[0]);
+
+                    var secOuterWidth = outerWidth - ((sideMargin*2) + innerBoxWidth);
+
+                    eachColCount = parseInt(secOuterWidth / eachBlstAreaWidth);
+                    eachColCount+=1;
+
+                
+                    //finding scrap area in height 
+
+                    eachBlstAreaLength = nofRows==1?parseFloat(innerBoxLength) : parseFloat(innerBoxLength + (gapLength/2));
+                    eachRowCount = parseInt((outerLength - (sideMargin * 2)) / eachBlstAreaLength);
+
+                    ////foundMinScrapsLength[c] = eachScrapLength;
+
+                    eachColCount = Number.isNaN(eachColCount) ? 0 : eachColCount;
+                    eachRowCount = Number.isNaN(eachRowCount) ? 0 : eachRowCount;
+
+
+                    var totalBoxes = eachRowCount * eachColCount;
+
+                   
+                    var blstArea =  innerBoxWidth * innerBoxLength * totalBoxes; 
+                    var gapArea =  gapWidthValue * gapLengthValue * totalBoxes; 
+
+                    var palletArea = outerWidth * outerLength ;
+                    var cornerMarginArea = palletArea - ( (outerLength - sideMargin) * (outerWidth - sideMargin ));
+
+
+//                  finding blank area 
+                    var sCrapAreaFixed = palletArea -  (blstArea + cornerMarginArea + gapArea ) ;
+
+                    
+
+                    if (Number.isNaN(sCrapAreaFixed)) {
+                        continue;
+                    }
+                    if (sCrapAreaFixed==0 || totalBoxes==0) {
+                        continue;
+                    }
+
+//                  finding blank area score  by dividing the blank area result from totalBoxes
+                    sCrapAreaFixed = sCrapAreaFixed/totalBoxes;
+                    
+                    sCrapAreaFixed = parseFloat(sCrapAreaFixed).toFixed(3);
+
+                    dataScrapAreas.push(
+                        {
+                            count: c,
+                            totalBoxes : totalBoxes,
+                            outerWidth : outerWidth,
+                            outerLength : outerLength,
+                            innerBoxWidth : innerBoxWidth,
+                            innerBoxLength : innerBoxLength,
+                            innerBoxHeight : innerBoxHeight,
+                            gapPercent : gapPercent,
+                            noOfRows : nofRows,
+                            gapWidthValue : gapWidthValue,
+                            gapLengthValue : gapLengthValue,
+                            pageSize : outerWidth +"x"+outerLength ,
+                            areaCornerMargin : cornerMarginArea,
+                            areaPallet : palletArea,
+                            areaBlst : blstArea,
+                            areaGap : gapArea,
+                            scrapArea: sCrapAreaFixed
+                        }
+                    );
+                }
+
+                $scope.foundScrapsList = dataScrapAreas;
+
+
+                dataScrapAreas = dataScrapAreas.sort(function (a, b) {
+                    return a.scrapArea - b.scrapArea;
+                });
+
+                var selectedIndex=0;
+            
+                
+                var preferedData = document.getElementById("preferedData");
+                preferedData.innerHTML = '';
+
+                if ((dataScrapAreas[selectedIndex]!= undefined) &&
+                    ( dataScrapAreas[selectedIndex] != 'undefined') && 
+                    (!Number.isNaN(dataScrapAreas[selectedIndex]))) {
+
+                    $scope.selectedCountIndex = dataScrapAreas[selectedIndex].count;
+                    $scope.redraw(
+                        dataScrapAreas[selectedIndex].outerWidth,
+                        dataScrapAreas[selectedIndex].outerLength,
+                        dataScrapAreas[selectedIndex].innerBoxWidth,
+                        dataScrapAreas[selectedIndex].innerBoxLength,
+                        dataScrapAreas[selectedIndex].innerBoxHeight,
+                        dataScrapAreas[selectedIndex].gapPercent,
+                        dataScrapAreas[selectedIndex].noOfRows,
+                        dataScrapAreas[selectedIndex].gapWidthValue,
+                        dataScrapAreas[selectedIndex].gapLengthValue);
+
+                }
+            }
+
+         $scope.redraw = function(outerWidth,outerLength,innerBoxWidth,innerBoxLength,innerBoxHeight,gapPercent,noOfRows,gapWidthValue,gapHeightValue){
+
+           // preferedData.innerHTML = "</br> Preferred Pallet : " + outerWidth+ "x"+outerLength+" & Area : " + preferredScrapObj.scrapArea;
+                
+           var eachBlstAreaLength = noOfRows == 1 ? parseFloat(innerBoxLength) : parseFloat(innerBoxLength + (gapHeightValue/2));
+           
+           var eachBlstAreaWidth = parseFloat(innerBoxWidth + (gapWidthValue));
+
+            var secOuterWidth = outerWidth - ((sideMargin*2) + innerBoxWidth);
+
+            var colCount = parseInt(secOuterWidth / eachBlstAreaWidth);
+
+            colCount+=1;
+
+            if((outerWidth - (sideMargin*2)) <= innerBoxWidth){
+                //colCount+=1;
+                colCount=0;
+            }
+
+           
+
+            var rowCount = parseInt((outerLength - sideMargin*2) / eachBlstAreaLength);
+
+            rowCount = Number.isNaN(rowCount) ? 0 : rowCount;
+            colCount = Number.isNaN(colCount) ? 0 : colCount;
+
+            var totalBoxes = rowCount * colCount;
+
+            var totalScrap = (outerLength * outerWidth) - ( totalBoxes * ( innerBoxWidth * innerBoxLength))
+
+            $scope.totalUPS = totalBoxes;
+
+            var diplayTxt = "Sheet Size : " + outerWidth + "x" + outerLength + 
+                            ", Box Size : " + innerBoxWidth + "x" + innerBoxLength + 
+                            ", Margin : " + gapPercent + "%  (" + gapWidthValue + " x " + gapHeightValue + 
+                            "), Total Boxes : " + totalBoxes +", Scrap Area : " + totalScrap;
+
+            var tit = document.getElementById("title");
+
+            tit.innerHTML = diplayTxt;
+
+            var startXx = 0 + sideMargin;
+            var startYy = 0 + sideMargin;
+
+            var c = document.getElementById("myCanvas");
+            c.height = outerLength;
+            c.width = outerWidth;
+
+            var ctx = c.getContext("2d");
+
+            if(colCount==0){
+
+                //alert("Invalid BLister Width");
+                return;
+            }
+
+            for (var rx = 0; rx < rowCount; rx++) {
+                for (var cx = 0; cx < colCount; cx++) {
+
+                    ctx.beginPath();
+                    ctx.lineWidth = "1px";
+                    ctx.strokeStyle = "#000000";
+                    ctx.rect(startXx, startYy, innerBoxWidth, innerBoxLength);
+                    ctx.stroke();
+
+                    startXx = startXx + ((innerBoxWidth + gapWidthValue));
+                }
+                startYy = startYy + (innerBoxLength + gapHeightValue);
+                startXx = 0 + sideMargin;
+            }
+        }
+
+
+        });
+    </script>
+
+</body>
+
+</html>
